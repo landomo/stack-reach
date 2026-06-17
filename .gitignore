@@ -1,0 +1,17 @@
+# Secrets & local-only config
+.env
+.claude/
+
+# Python
+__pycache__/
+*.pyc
+
+# Generated runtime data (per-user, not source)
+scored_notes.json
+archive.json
+beta_requests.json
+notes_cache.json
+notes_mapped.json
+
+# macOS
+.DS_Store

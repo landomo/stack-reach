@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Substack Engagement</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --peer-color: #0d9488;
+    --peer-light: #ccfbf1;
+    --hv-color: #d97706;
+    --hv-light: #fef3c7;
+    --mixed-color: #7c3aed;
+    --bg: #f8f7f4;
+    --card-bg: #ffffff;
+    --text: #1a1a1a;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: #1a1a1a;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+  }
+  .logo span { color: #a3a3a3; font-weight: 400; }
+
+  .header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .header-btn-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .last-ran {
+    font-size: 12px;
+    color: #9ca3af;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all .15s;
+  }
+  .btn-ghost {
+    background: rgba(255,255,255,.1);
+    color: #fff;
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,.18); }
+  .btn-primary {
+    background: #fff;
+    color: #1a1a1a;
+  }
+  .btn-primary:hover { background: #f0f0f0; }
+  .btn-primary:disabled { opacity: .5; cursor: default; }
+
+  /* ── Meter section ── */
+  .meter-section {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 28px 32px 24px;
+  }
+
+  .meter-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .meter-heading-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .meter-heading-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--mixed-color);
+    background: #ede9fe;
+    padding: 4px 12px;
+    border-radius: 99px;
+  }
+
+  .dot {
+    display: inline-block;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+  }
+  .peer .dot  { background: var(--peer-color); }
+  .hv .dot    { background: var(--hv-color); }
+
+  /* slider track */
+  .meter-track {
+    position: relative;
+    height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  .meter-gradient {
+    position: absolute;
+    left: 0; right: 0;
+    height: 8px;
+    border-radius: 99px;
+    background: linear-gradient(to right, var(--peer-color), #3b82f6, var(--hv-color));
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    background: transparent;
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid #1a1a1a;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    transition: transform .1s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: 99px;
+    background: transparent;
+  }
+
+  .meter-ends {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+  .meter-end { display: flex; flex-direction: column; gap: 3px; }
+  .meter-end.hv { align-items: flex-end; text-align: right; }
+  .meter-end-top {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .meter-end.peer .meter-end-top { color: var(--peer-color); }
+  .meter-end.hv .meter-end-top   { color: var(--hv-color); }
+  .meter-end-sub {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .meter-total {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* ── Topic chips ── */
+  .topic-bar {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+  .topic-bar-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .topic-bar-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .topic-clear {
+    border: none;
+    background: none;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 2px 4px;
+    visibility: hidden;
+  }
+  .topic-clear:hover { color: var(--text); }
+  .topic-clear.show { visibility: visible; }
+
+  .topic-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .topic-chip {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+    transition: all .12s;
+    user-select: none;
+  }
+  .topic-chip:hover { border-color: #c0c0c0; background: #fafafa; }
+  .topic-chip.active {
+    background: var(--mixed-color);
+    border-color: var(--mixed-color);
+    color: #fff;
+  }
+  .topic-chip .chip-count {
+    opacity: .6;
+    font-size: 11px;
+    margin-left: 5px;
+  }
+
+  /* topic tags shown on cards */
+  .card-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .card-topic-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: #f1f0fb;
+    color: var(--mixed-color);
+  }
+  .card-topic-tag.matched {
+    background: var(--mixed-color);
+    color: #fff;
+  }
+  .card.dimmed { opacity: .45; }
+
+  /* ── Cookie expiry banner ── */
+  .cookie-banner {
+    display: none;
+    align-items: flex-start;
+    gap: 12px;
+    background: #fef3c7;
+    border-bottom: 1px solid #fcd34d;
+    padding: 14px 32px;
+    font-size: 13px;
+    color: #92400e;
+    line-height: 1.5;
+  }
+  .cookie-banner.show { display: flex; }
+  .cookie-banner-icon { font-size: 16px; flex-shrink: 0; }
+  .cookie-banner-text { flex: 1; }
+  .cookie-banner-text strong { color: #78350f; }
+  .cookie-banner-text a { color: #92400e; font-weight: 600; }
+  .cookie-banner-text code {
+    background: #fde68a;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  .cookie-banner-close {
+    border: none; background: none; cursor: pointer;
+    color: #92400e; font-size: 14px; flex-shrink: 0; padding: 2px;
+  }
+
+  /* ── Cards grid ── */
+  .cards-section {
+    padding: 28px 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .section-header strong {
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 18px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: opacity .25s, transform .25s;
+    animation: fadeIn .3s ease;
+  }
+  .card.hidden {
+    display: none;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .card-author {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .card-date {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .score-badge {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .score-badge.peer  { background: var(--peer-light);  color: var(--peer-color); }
+  .score-badge.hv    { background: var(--hv-light);    color: var(--hv-color); }
+  .score-badge.mixed { background: #ede9fe; color: var(--mixed-color); }
+
+  .card-type-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .card-type-pill.peer  { background: var(--peer-light); color: var(--peer-color); }
+  .card-type-pill.hv    { background: var(--hv-light);   color: var(--hv-color); }
+
+  .card-body {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #374151;
+  }
+
+  .card-engagement {
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .card-engagement span { display: flex; align-items: center; gap: 4px; }
+
+  .card-box {
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .card-box-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    margin-bottom: 6px;
+  }
+  .card-box-text {
+    font-size: 13px;
+    line-height: 1.55;
+    color: #374151;
+  }
+
+  .why-box   { background: #f0f9ff; }
+  .why-box .card-box-label { color: #0369a1; }
+
+  .reply-box { background: #f0fdf4; }
+  .reply-box .card-box-label { color: #15803d; }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 2px;
+  }
+
+  .btn-open {
+    flex: 1;
+    padding: 9px 14px;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background .15s;
+  }
+  .btn-open:hover { background: #333; }
+
+  .btn-act {
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: #fff;
+    transition: all .12s;
+    white-space: nowrap;
+  }
+  .btn-responded { color: var(--peer-color); }
+  .btn-responded:hover { background: var(--peer-light); border-color: var(--peer-color); }
+  .btn-skipped { color: var(--muted); }
+  .btn-skipped:hover { background: #f3f4f6; border-color: #c0c0c0; }
+
+  /* ── Empty state ── */
+  .empty-state {
+    text-align: center;
+    padding: 64px 32px;
+    color: var(--muted);
+  }
+  .empty-state h3 { font-size: 18px; margin-bottom: 8px; color: var(--text); }
+  .empty-state p { font-size: 14px; line-height: 1.6; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #1a1a1a;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 99px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: transform .3s;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── Loading ── */
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 64px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: #1a1a1a;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Digest modal ── */
+  .digest-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    padding: 32px;
+  }
+  .digest-modal.show { display: flex; }
+
+  .digest-panel {
+    background: #fff;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 680px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  }
+
+  .digest-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .digest-title { font-size: 16px; font-weight: 700; }
+  .digest-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .digest-close {
+    border: none; background: none; cursor: pointer;
+    font-size: 16px; color: var(--muted); padding: 4px;
+  }
+  .digest-close:hover { color: var(--text); }
+
+  .digest-preview {
+    flex: 1;
+    overflow: auto;
+    background: #f3f3f1;
+    padding: 16px;
+  }
+  .digest-preview iframe {
+    width: 100%;
+    min-height: 380px;
+    height: 48vh;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  .digest-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+  }
+  .digest-hint { font-size: 12px; color: var(--muted); }
+
+  /* ── Archive list ── */
+  .archive-list {
+    flex: 1;
+    overflow: auto;
+    padding: 16px 20px;
+    background: #faf9f7;
+  }
+  .archive-empty {
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    padding: 48px 16px;
+  }
+  .archive-item {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .archive-item-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .archive-author { font-weight: 700; font-size: 14px; }
+  .archive-status {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+  .archive-status.responded { background: var(--peer-light); color: var(--peer-color); }
+  .archive-status.skipped   { background: #f1f1f1; color: var(--muted); }
+  .archive-body {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .archive-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12px;
+  }
+  .archive-meta a { color: #1a6fc4; text-decoration: none; }
+  .archive-date { color: var(--muted); }
+  .archive-restore {
+    border: none; background: none; cursor: pointer;
+    color: var(--muted); font-size: 12px; padding: 0;
+  }
+  .archive-restore:hover { color: var(--text); text-decoration: underline; }
+  .digest-foot-btns { display: flex; gap: 10px; flex-shrink: 0; }
+
+  .btn-ghost-dark {
+    background: #f0f0ef; color: #1a1a1a;
+  }
+  .btn-ghost-dark:hover { background: #e4e4e2; }
+  .btn-primary-dark {
+    background: #1a1a1a; color: #fff;
+  }
+  .btn-primary-dark:hover { background: #333; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Substack Engagement <span>/ Leandro Oliva</span></div>
+  <div class="header-actions">
+    <div class="header-btn-row">
+      <button class="btn btn-ghost" onclick="openArchive()">🗄 Archive</button>
+      <button class="btn btn-ghost" onclick="refresh()">↻ Refresh</button>
+      <button class="btn btn-primary" id="emailBtn" onclick="compileDigest()">Compile digest</button>
+    </div>
+    <div class="last-ran" id="lastRan">Last ran: —</div>
+  </div>
+</header>
+
+<div class="cookie-banner" id="cookieBanner">
+  <span class="cookie-banner-icon">🔑</span>
+  <div class="cookie-banner-text">
+    <strong>Your Substack session has expired.</strong>
+    Open <a href="https://substack.com/notes" target="_blank">substack.com</a> while logged in →
+    DevTools (⌥⌘I) → Application → Cookies → copy <code>substack.sid</code> → paste it into
+    <code>.env</code> as <code>SUBSTACK_SESSION_COOKIE</code> and restart the server.
+  </div>
+  <button class="cookie-banner-close" onclick="document.getElementById('cookieBanner').classList.remove('show')">✕</button>
+</div>
+
+<div class="meter-section">
+  <div class="meter-heading">
+    <span class="meter-heading-title">Who should I prioritize?</span>
+    <span class="meter-heading-value" id="meterLabel">Balanced mix</span>
+  </div>
+  <div class="meter-track">
+    <div class="meter-gradient"></div>
+    <input type="range" id="meter" min="0" max="100" value="50" oninput="onMeter(this.value)">
+  </div>
+  <div class="meter-ends">
+    <div class="meter-end peer">
+      <div class="meter-end-top"><span class="dot"></span>Engagement</div>
+      <div class="meter-end-sub" id="peerCount">peers at your stage</div>
+    </div>
+    <div class="meter-end hv">
+      <div class="meter-end-top">High visibility<span class="dot"></span></div>
+      <div class="meter-end-sub" id="hvCount">large audiences</div>
+    </div>
+  </div>
+  <div class="meter-total" id="mixedCount"></div>
+
+  <div class="topic-bar" id="topicBar">
+    <div class="topic-bar-head">
+      <span class="topic-bar-title">Emphasize topics</span>
+      <button class="topic-clear" id="topicClear" onclick="clearTopics()">Clear</button>
+    </div>
+    <div class="topic-chips" id="topicChips"></div>
+  </div>
+</div>
+
+<div class="cards-section">
+  <div id="sectionHeader" class="section-header"></div>
+  <div class="cards-grid" id="cardsGrid">
+    <div class="loading"><div class="spinner"></div>Loading notes…</div>
+  </div>
+</div>
+
+<div class="digest-modal" id="digestModal">
+  <div class="digest-panel">
+    <div class="digest-head">
+      <div>
+        <div class="digest-title">Email digest preview</div>
+        <div class="digest-sub" id="digestCount"></div>
+      </div>
+      <button class="digest-close" onclick="closeDigest()">✕</button>
+    </div>
+    <div class="digest-preview">
+      <iframe id="digestFrame" title="Digest preview"></iframe>
+    </div>
+    <div class="digest-foot">
+      <div class="digest-hint">Spam-safe: plain formatting, no images, plain-text copy included.</div>
+      <div class="digest-foot-btns">
+        <button class="btn btn-ghost-dark" onclick="downloadDigest()">Download .html</button>
+        <button class="btn btn-primary-dark" onclick="copyDigest()">Copy for Gmail</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="digest-modal" id="archiveModal">
+  <div class="digest-panel">
+    <div class="digest-head">
+      <div>
+        <div class="digest-title">Archive</div>
+        <div class="digest-sub" id="archiveCount"></div>
+      </div>
+      <button class="digest-close" onclick="closeArchive()">✕</button>
+    </div>
+    <div class="archive-list" id="archiveList"></div>
+    <div class="digest-foot">
+      <div class="digest-hint">Responded and skipped notes you've filed away.</div>
+      <div class="digest-foot-btns">
+        <button class="btn btn-ghost-dark" onclick="clearArchive()">Clear all</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let allData = { high_visibility: [], peers: [], all: [] };
+  let currentHV = [];
+  let currentPeers = [];
+  let topicVocab = [];
+  let selectedTopics = new Set();
+  let archiveItems = [];
+  let archivedIds = new Set();
+
+  function updateLastRan(iso) {
+    const el = document.getElementById('lastRan');
+    if (!iso) { el.textContent = 'Last ran: —'; return; }
+    const d = new Date(iso);
+    const now = new Date();
+    const sameDay = d.toDateString() === now.toDateString();
+    const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    const when = sameDay
+      ? `today ${time}`
+      : `${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${time}`;
+    el.textContent = `Last ran: ${when}`;
+  }
+
+  async function loadArchive() {
+    try {
+      const r = await fetch('/archive');
+      if (!r.ok) return;
+      const d = await r.json();
+      archiveItems = d.items || [];
+      archivedIds = new Set(archiveItems.map(it => it.id));
+    } catch(e) { /* archive endpoint only exists under serve.py */ }
+  }
+
+  function applyData(d) {
+    allData = d;
+    // Filter out anything already archived
+    currentHV = (d.high_visibility || []).filter(n => !archivedIds.has(n.id));
+    currentPeers = (d.peers || []).filter(n => !archivedIds.has(n.id));
+    topicVocab = d.topic_vocab || [];
+    updateLastRan(d.generated_at);
+    renderChips();
+    updateCounts();
+    onMeter(document.getElementById('meter').value);
+  }
+
+  async function loadData() {
+    try {
+      await loadArchive();
+      // Try serve.py's /data endpoint first, fall back to static JSON file
+      let r = await fetch('/data');
+      if (!r.ok) r = await fetch('/scored_notes.json');
+      const d = await r.json();
+      if (d.error) {
+        document.getElementById('cardsGrid').innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1">
+            <h3>No notes scored yet</h3>
+            <p>${d.error}</p>
+          </div>`;
+        return;
+      }
+      applyData(d);
+      checkAuth();
+    } catch(e) {
+      document.getElementById('cardsGrid').innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <h3>Could not load data</h3>
+          <p>Make sure the server is running and notes have been scored.</p>
+        </div>`;
+    }
+  }
+
+  function showCookieBanner(show) {
+    document.getElementById('cookieBanner').classList.toggle('show', show);
+  }
+
+  async function checkAuth() {
+    // Only meaningful under serve.py; static preview servers will 404 → ignore
+    try {
+      const r = await fetch('/check-auth');
+      if (!r.ok) return;
+      const d = await r.json();
+      showCookieBanner(!d.ok && (d.reason === 'expired' || d.reason === 'missing'));
+    } catch(e) { /* no auth endpoint — ignore */ }
+  }
+
+  function updateCounts() {
+    const peers = currentPeers.length;
+    const hv = currentHV.length;
+    document.getElementById('peerCount').textContent =
+      `${peers} ${peers === 1 ? 'peer' : 'peers'} at your stage`;
+    document.getElementById('hvCount').textContent =
+      `${hv} large ${hv === 1 ? 'audience' : 'audiences'}`;
+    document.getElementById('mixedCount').textContent =
+      `${peers + hv} opportunities scored from your feed`;
+  }
+
+  function topicCount(topic) {
+    const pool = [...currentHV, ...currentPeers];
+    return pool.filter(n => (n.topics || []).includes(topic)).length;
+  }
+
+  function renderChips() {
+    const bar = document.getElementById('topicBar');
+    const chips = document.getElementById('topicChips');
+    if (!topicVocab.length) {
+      bar.style.display = 'none';
+      return;
+    }
+    bar.style.display = 'block';
+    // Drop any selected topics that aren't in the current vocab
+    selectedTopics.forEach(t => { if (!topicVocab.includes(t)) selectedTopics.delete(t); });
+
+    chips.innerHTML = topicVocab.map(t => {
+      const count = topicCount(t);
+      const active = selectedTopics.has(t) ? ' active' : '';
+      const dimmed = count === 0 ? ' style="opacity:.4"' : '';
+      return `<button class="topic-chip${active}"${dimmed} onclick="toggleTopic(${JSON.stringify(t).replace(/"/g,'&quot;')})">
+        ${t}<span class="chip-count">${count}</span>
+      </button>`;
+    }).join('');
+
+    document.getElementById('topicClear').classList.toggle('show', selectedTopics.size > 0);
+  }
+
+  function toggleTopic(t) {
+    if (selectedTopics.has(t)) selectedTopics.delete(t);
+    else selectedTopics.add(t);
+    renderChips();
+    onMeter(document.getElementById('meter').value);
+  }
+
+  function clearTopics() {
+    selectedTopics.clear();
+    renderChips();
+    onMeter(document.getElementById('meter').value);
+  }
+
+  function onMeter(val) {
+    val = parseInt(val);
+
+    // val 0 = all peers, 50 = balanced, 100 = all HV
+    // blend threshold: below 30 hide HV, above 70 hide peers, middle show both weighted
+    let label = '';
+    if (val < 20)       label = 'Engagement focus';
+    else if (val < 40)  label = 'Leaning engagement';
+    else if (val <= 60) label = 'Balanced mix';
+    else if (val < 80)  label = 'Leaning high-visibility';
+    else                label = 'High-visibility focus';
+
+    document.getElementById('meterLabel').textContent = label;
+
+    // Build merged + sorted list based on slider position
+    const hvWeight   = val / 100;        // 0→0, 1→100
+    const peerWeight = 1 - hvWeight;
+
+    const topicsActive = selectedTopics.size > 0;
+
+    // Assign a "display score" per card blending type + relevance + topic emphasis
+    const cards = [
+      ...currentHV.map(n => ({ ...n, _typeScore: 1.0 })),
+      ...currentPeers.map(n => ({ ...n, _typeScore: 0.0 })),
+    ].map(n => {
+      const topicMatch = topicsActive && (n.topics || []).some(t => selectedTopics.has(t));
+      return {
+        ...n,
+        _topicMatch: topicMatch,
+        _displayScore: (
+          (n._typeScore * hvWeight + (1 - n._typeScore) * peerWeight) * 0.6 +
+          ((n.relevance_score || 0) / 10) * 0.4
+        )
+      };
+    });
+
+    // Filter: soft fade out cards far from slider focus
+    // Hard hide when val < 15: hide HV; val > 85: hide peers
+    const hideHV   = val < 15;
+    const hidePeer = val > 85;
+
+    // When topics are active, matching notes float to the top; others stay
+    // visible but dimmed. Within each group, sort by display score.
+    cards.sort((a, b) => {
+      if (topicsActive && a._topicMatch !== b._topicMatch) return b._topicMatch - a._topicMatch;
+      return b._displayScore - a._displayScore;
+    });
+
+    const visible = cards.filter(c => {
+      if (hideHV   && c._typeScore === 1.0) return false;
+      if (hidePeer && c._typeScore === 0.0) return false;
+      return true;
+    });
+
+    renderCards(visible, val);
+
+    const header = document.getElementById('sectionHeader');
+    if (topicsActive) {
+      const matches = visible.filter(c => c._topicMatch).length;
+      header.innerHTML = `<strong>${matches} on-topic</strong> · ${visible.length} total · emphasizing ${selectedTopics.size} ${selectedTopics.size === 1 ? 'topic' : 'topics'}`;
+    } else {
+      header.innerHTML = `<strong>${visible.length} opportunities</strong> · sorted by relevance to your focus`;
+    }
+  }
+
+  let currentVisible = [];
+
+  function renderCards(cards, sliderVal) {
+    currentVisible = cards;
+    const grid = document.getElementById('cardsGrid');
+    if (!cards.length) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+        <h3>No notes in this range</h3>
+        <p>Try moving the meter to see more opportunities.</p>
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = cards.map(n => cardHTML(n, sliderVal)).join('');
+  }
+
+  function cardHTML(n, sliderVal) {
+    const isHV   = n._typeScore === 1.0;
+    const isPeer = n._typeScore === 0.0;
+
+    // Determine visual type based on slider + card type
+    let typeClass, typeLabel;
+    if (isHV)   { typeClass = 'hv';   typeLabel = '🚀 High visibility'; }
+    else        { typeClass = 'peer'; typeLabel = '🤝 Peer'; }
+
+    // At the middle of the slider, show both types without strong color
+    const isMixed = sliderVal >= 35 && sliderVal <= 65;
+    const badgeClass = isMixed ? 'mixed' : typeClass;
+
+    const score = n.relevance_score || 0;
+    const author = n.author || 'Substack writer';
+    const body = escHtml(n.body || '');
+    const why = escHtml(n.why || '');
+    const reply = escHtml(n.reply_angle || '');
+    const url = n.url || '#';
+
+    const dateStr = n.post_date
+      ? new Date(n.post_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      : '';
+
+    const subs = n.subscriber_count
+      ? `· ${n.subscriber_count.toLocaleString()} subs`
+      : '';
+
+    const topicsActive = selectedTopics.size > 0;
+    const dimClass = (topicsActive && !n._topicMatch) ? ' dimmed' : '';
+
+    const topics = (n.topics || []);
+    const topicTags = topics.length ? `
+      <div class="card-topics">
+        ${topics.map(t => {
+          const matched = selectedTopics.has(t) ? ' matched' : '';
+          return `<span class="card-topic-tag${matched}">${escHtml(t)}</span>`;
+        }).join('')}
+      </div>` : '';
+
+    return `
+    <div class="card${dimClass}" data-id="${n.id}">
+      <div class="card-top">
+        <div class="card-meta">
+          <div class="card-author">${escHtml(author)}</div>
+          <div class="card-date">${dateStr} ${subs}</div>
+          <div style="margin-top:4px">
+            <span class="card-type-pill ${typeClass}">${typeLabel}</span>
+          </div>
+        </div>
+        <div class="score-badge ${badgeClass}">${score}</div>
+      </div>
+
+      <div class="card-body">${body}</div>
+
+      ${topicTags}
+
+      <div class="card-engagement">
+        <span>❤ ${n.reaction_count || 0}</span>
+        <span>💬 ${n.comment_count || 0}</span>
+        <span>🔁 ${n.restacks || 0}</span>
+      </div>
+
+      ${why ? `
+      <div class="card-box why-box">
+        <div class="card-box-label">Why engage</div>
+        <div class="card-box-text">${why}</div>
+      </div>` : ''}
+
+      ${reply ? `
+      <div class="card-box reply-box">
+        <div class="card-box-label">Suggested reply angle</div>
+        <div class="card-box-text">${reply}</div>
+      </div>` : ''}
+
+      <div class="card-actions">
+        <a href="${url}" target="_blank" class="btn-open">Open Note →</a>
+        <button class="btn-act btn-responded" onclick="archiveNote(${n.id}, 'responded')">✓ Responded</button>
+        <button class="btn-act btn-skipped" onclick="archiveNote(${n.id}, 'skipped')">Skip</button>
+      </div>
+    </div>`;
+  }
+
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+
+  async function refresh() {
+    const btn = document.querySelector('.btn-ghost');
+    const orig = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Fetching…';
+    showToast('Fetching and scoring your live feed…');
+    try {
+      const r = await fetch('/refresh');
+      const d = await r.json();
+      if (d.error) {
+        if (d.auth_expired) showCookieBanner(true);
+        throw new Error(d.auth_expired ? 'session expired — see banner above' : d.error);
+      }
+
+      showCookieBanner(false);
+      await loadArchive();
+      applyData(d);
+      showToast(`Refreshed — ${d.fetched || 0} notes, ${currentHV.length + currentPeers.length} opportunities`);
+    } catch(e) {
+      showToast('Refresh failed: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = orig;
+    }
+  }
+
+  // ── Digest compilation ──────────────────────────────────────────
+  // Builds clean, paste-ready email HTML from whatever is currently on screen.
+  // Deliberately spam-filter-safe: system fonts, plain text-to-link ratio,
+  // no images, no emoji, no marketing language, one link per item, and a
+  // matching plain-text alternative copied alongside the HTML.
+
+  let lastDigest = { html: '', text: '' };
+
+  function buildDigest(cards) {
+    const today = new Date().toLocaleDateString('en-US', {
+      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+    });
+
+    const esc = s => String(s || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+    // ── HTML version ──
+    const rows = cards.map((n, i) => {
+      const isHV = n._typeScore === 1.0;
+      const type = isHV ? 'High-visibility' : 'Peer';
+      const subs = n.subscriber_count ? ` · ${n.subscriber_count.toLocaleString()} subscribers` : '';
+      const date = n.post_date
+        ? new Date(n.post_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        : '';
+      return `
+      <tr><td style="padding:0 0 28px 0;">
+        <p style="margin:0 0 2px 0;font-size:15px;font-weight:600;color:#1a1a1a;">
+          ${esc(n.author)}
+        </p>
+        <p style="margin:0 0 12px 0;font-size:13px;color:#666;">
+          ${type} opportunity${subs}${date ? ` · ${date}` : ''} · relevance ${n.relevance_score || 0}/10
+        </p>
+        <p style="margin:0 0 12px 0;font-size:14px;line-height:1.6;color:#333;">
+          ${esc(n.body)}
+        </p>
+        ${n.why ? `<p style="margin:0 0 10px 0;font-size:14px;line-height:1.6;color:#333;">
+          <strong style="color:#1a1a1a;">Why engage:</strong> ${esc(n.why)}
+        </p>` : ''}
+        ${n.reply_angle ? `<p style="margin:0 0 12px 0;font-size:14px;line-height:1.6;color:#333;">
+          <strong style="color:#1a1a1a;">Suggested reply:</strong> ${esc(n.reply_angle)}
+        </p>` : ''}
+        <p style="margin:0;font-size:14px;">
+          <a href="${esc(n.url)}" style="color:#1a6fc4;text-decoration:underline;">Read the note on Substack</a>
+        </p>
+      </td></tr>`;
+    }).join('');
+
+    const html = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#ffffff;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;">
+<tr><td align="center" style="padding:24px 16px;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;font-family:-apple-system,Helvetica,Arial,sans-serif;">
+  <tr><td style="padding:0 0 8px 0;">
+    <p style="margin:0;font-size:18px;font-weight:700;color:#1a1a1a;">Substack engagement notes</p>
+    <p style="margin:4px 0 0 0;font-size:13px;color:#666;">${today} · ${cards.length} ${cards.length === 1 ? 'opportunity' : 'opportunities'}</p>
+  </td></tr>
+  <tr><td style="padding:16px 0 24px 0;"><hr style="border:none;border-top:1px solid #e5e5e5;margin:0;"></td></tr>
+  ${rows}
+  <tr><td style="padding:8px 0 0 0;border-top:1px solid #e5e5e5;">
+    <p style="margin:16px 0 0 0;font-size:12px;color:#999;line-height:1.5;">
+      Compiled from your Substack reader feed. Reply angles are drafts to adapt in your own voice.
+    </p>
+  </td></tr>
+</table>
+</td></tr></table>
+</body></html>`;
+
+    // ── Plain-text version (always include for deliverability) ──
+    let text = `Substack engagement notes\n${today} · ${cards.length} ${cards.length === 1 ? 'opportunity' : 'opportunities'}\n\n`;
+    cards.forEach(n => {
+      const isHV = n._typeScore === 1.0;
+      const subs = n.subscriber_count ? ` (${n.subscriber_count.toLocaleString()} subscribers)` : '';
+      text += `${n.author}${subs}\n`;
+      text += `${isHV ? 'High-visibility' : 'Peer'} · relevance ${n.relevance_score || 0}/10\n`;
+      text += `${n.body}\n`;
+      if (n.why) text += `Why engage: ${n.why}\n`;
+      if (n.reply_angle) text += `Suggested reply: ${n.reply_angle}\n`;
+      text += `Read: ${n.url}\n\n`;
+    });
+
+    return { html, text };
+  }
+
+  function compileDigest() {
+    if (!currentVisible.length) {
+      showToast('Nothing on screen to compile');
+      return;
+    }
+    lastDigest = buildDigest(currentVisible);
+    document.getElementById('digestFrame').srcdoc = lastDigest.html;
+    document.getElementById('digestCount').textContent =
+      `${currentVisible.length} ${currentVisible.length === 1 ? 'opportunity' : 'opportunities'} · matches your current meter position`;
+    document.getElementById('digestModal').classList.add('show');
+  }
+
+  function closeDigest() {
+    document.getElementById('digestModal').classList.remove('show');
+  }
+
+  async function copyDigest() {
+    try {
+      if (navigator.clipboard && window.ClipboardItem) {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'text/html': new Blob([lastDigest.html], { type: 'text/html' }),
+            'text/plain': new Blob([lastDigest.text], { type: 'text/plain' }),
+          })
+        ]);
+        showToast('Copied — paste into a Gmail compose window');
+      } else {
+        await navigator.clipboard.writeText(lastDigest.text);
+        showToast('Copied as plain text');
+      }
+    } catch(e) {
+      showToast('Copy failed — use Download instead');
+    }
+  }
+
+  function downloadDigest() {
+    const blob = new Blob([lastDigest.html], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `substack-digest-${new Date().toISOString().slice(0,10)}.html`;
+    a.click();
+    showToast('Downloaded digest HTML');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── Responded / Skipped / Archive ──────────────────────────────
+  function findNote(id) {
+    return [...currentHV, ...currentPeers].find(n => n.id === id);
+  }
+
+  async function archiveNote(id, status) {
+    const note = findNote(id);
+    if (!note) return;
+    // Optimistically remove from the active board
+    currentHV = currentHV.filter(n => n.id !== id);
+    currentPeers = currentPeers.filter(n => n.id !== id);
+    archivedIds.add(id);
+    updateCounts();
+    onMeter(document.getElementById('meter').value);
+
+    try {
+      const r = await fetch('/archive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ note, status }),
+      });
+      if (!r.ok) throw new Error('save failed');
+      await loadArchive();
+      showToast(status === 'responded' ? 'Marked responded → archived' : 'Skipped → archived');
+    } catch(e) {
+      showToast('Could not save to archive (run via serve.py)');
+    }
+  }
+
+  function openArchive() {
+    renderArchive();
+    document.getElementById('archiveModal').classList.add('show');
+  }
+  function closeArchive() {
+    document.getElementById('archiveModal').classList.remove('show');
+  }
+
+  function renderArchive() {
+    const list = document.getElementById('archiveList');
+    document.getElementById('archiveCount').textContent =
+      archiveItems.length
+        ? `${archiveItems.length} archived · ${archiveItems.filter(i => i.status === 'responded').length} responded, ${archiveItems.filter(i => i.status === 'skipped').length} skipped`
+        : '';
+    if (!archiveItems.length) {
+      list.innerHTML = `<div class="archive-empty">Nothing archived yet.<br>Mark notes as Responded or Skip to file them here.</div>`;
+      return;
+    }
+    list.innerHTML = archiveItems.map(it => {
+      const date = it.archived_at
+        ? new Date(it.archived_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+        : '';
+      const body = escHtml((it.body || '').slice(0, 180));
+      return `
+      <div class="archive-item">
+        <div class="archive-item-top">
+          <span class="archive-author">${escHtml(it.author || 'Unknown')}</span>
+          <span class="archive-status ${it.status}">${it.status}</span>
+        </div>
+        <div class="archive-body">${body}${(it.body || '').length > 180 ? '…' : ''}</div>
+        <div class="archive-meta">
+          ${it.url ? `<a href="${escHtml(it.url)}" target="_blank">Open note</a>` : ''}
+          <span class="archive-date">${date}</span>
+          <button class="archive-restore" onclick="restoreNote(${it.id})">Restore to board</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  async function restoreNote(id) {
+    const item = archiveItems.find(it => it.id === id);
+    try {
+      await fetch('/archive/restore', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+    } catch(e) { /* ignore */ }
+    archivedIds.delete(id);
+    // Put it back on the active board if we still have its data
+    if (item) {
+      const note = { ...item };
+      delete note.status; delete note.archived_at;
+      if (note.opportunity_type === 'high_visibility') currentHV.push(note);
+      else currentPeers.push(note);
+    }
+    await loadArchive();
+    updateCounts();
+    onMeter(document.getElementById('meter').value);
+    renderArchive();
+    showToast('Restored to board');
+  }
+
+  async function clearArchive() {
+    if (!archiveItems.length) return;
+    if (!confirm('Clear the entire archive? This cannot be undone.')) return;
+    try {
+      await fetch('/archive/clear', { method: 'POST' });
+    } catch(e) { /* ignore */ }
+    archiveItems = [];
+    archivedIds = new Set();
+    renderArchive();
+    showToast('Archive cleared');
+  }
+
+  loadData();
+</script>
+</body>
+</html>
